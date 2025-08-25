@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Background Colors */
+    --color-background: #0F1114; /* near-black */
+    --color-foreground: #FFFFFF; /* white */
+    --color-card: #252A31; /* elevated surface */
+    --color-card-foreground: #FFFFFF; /* white */
+    --color-popover: #252A31; /* elevated surface */
+    --color-popover-foreground: #FFFFFF; /* white */
+    --color-muted: #1A1D23; /* deep charcoal */
+    --color-muted-foreground: #A0A6B0; /* muted gray */
+    
+    /* Primary Colors */
+    --color-primary: #FF6B35; /* energizing orange */
+    --color-primary-foreground: #FFFFFF; /* white */
+    --color-secondary: #1A1D23; /* deep charcoal */
+    --color-secondary-foreground: #FFFFFF; /* white */
+    
+    /* Accent Colors */
+    --color-accent: #00D4FF; /* cyan highlight */
+    --color-accent-foreground: #0F1114; /* near-black */
+    
+    /* State Colors */
+    --color-success: #00C851; /* vibrant green */
+    --color-success-foreground: #FFFFFF; /* white */
+    --color-warning: #FFB347; /* warm amber */
+    --color-warning-foreground: #0F1114; /* near-black */
+    --color-error: #FF4444; /* clear red */
+    --color-error-foreground: #FFFFFF; /* white */
+    --color-destructive: #FF4444; /* clear red */
+    --color-destructive-foreground: #FFFFFF; /* white */
+    
+    /* UI Elements */
+    --color-border: rgba(255, 255, 255, 0.1); /* subtle white border */
+    --color-input: #252A31; /* elevated surface */
+    --color-ring: #FF6B35; /* energizing orange */
+    
+    /* Text Colors */
+    --color-text-primary: #FFFFFF; /* white */
+    --color-text-secondary: #A0A6B0; /* muted gray */
+    
+    /* Shadows */
+    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.6);
+    
+    /* Border Radius */
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .gaming-glow {
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+  }
+  
+  .gaming-border {
+    border: 2px solid var(--color-primary);
+  }
+  
+  .gaming-transition {
+    transition: all 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+  
+  .gaming-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-modal);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

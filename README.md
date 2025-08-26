@@ -1,105 +1,176 @@
-# React
+# CS Quiz Arena
 
-A modern React-based project utilizing the latest frontend technologies and tools for building responsive web applications.
+Uma plataforma de quiz competitivo sobre Counter-Strike, onde jogadores podem testar seus conhecimentos, competir com outros e ganhar prêmios.
 
-## 🚀 Features
+## 🚀 Tecnologias
 
-- **React 18** - React version with improved rendering and concurrent features
-- **Vite** - Lightning-fast build tool and development server
-- **Redux Toolkit** - State management with simplified Redux setup
-- **TailwindCSS** - Utility-first CSS framework with extensive customization
-- **React Router v6** - Declarative routing for React applications
-- **Data Visualization** - Integrated D3.js and Recharts for powerful data visualization
-- **Form Management** - React Hook Form for efficient form handling
-- **Animation** - Framer Motion for smooth UI animations
-- **Testing** - Jest and React Testing Library setup
+- **React 18** - Versão do React com renderização aprimorada e recursos concorrentes
+- **Vite** - Ferramenta de build e servidor de desenvolvimento ultrarrápido
+- **Redux Toolkit** - Gerenciamento de estado com configuração Redux simplificada
+- **TailwindCSS** - Framework CSS utilitário com ampla personalização
+- **React Router v6** - Roteamento declarativo para aplicações React
+- **Data Visualization** - D3.js e Recharts integrados para visualização de dados
+- **Form Management** - React Hook Form para manipulação eficiente de formulários
+- **Animation** - Framer Motion para animações suaves de UI
+- **Testing** - Configuração de Jest e React Testing Library
 
-## 📋 Prerequisites
+## 📋 Pré-requisitos
 
-- Node.js (v14.x or higher)
-- npm or yarn
+- Node.js (v14.x ou superior)
+- npm ou yarn
 
-## 🛠️ Installation
+## 🛠️ Instalação
 
-1. Install dependencies:
+1. Instale as dependências:
    ```bash
    npm install
-   # or
+   # ou
    yarn install
    ```
    
-2. Start the development server:
+2. Inicie o servidor de desenvolvimento:
    ```bash
-   npm start
-   # or
-   yarn start
+   npm run dev
+   # ou
+   yarn dev
    ```
 
-## 📁 Project Structure
+## 📁 Estrutura do Projeto
 
 ```
-react_app/
-├── public/             # Static assets
+cs_quiz_arena/
+├── public/             # Ativos estáticos
 ├── src/
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Page components
-│   ├── styles/         # Global styles and Tailwind configuration
-│   ├── App.jsx         # Main application component
-│   ├── Routes.jsx      # Application routes
-│   └── index.jsx       # Application entry point
-├── .env                # Environment variables
-├── index.html          # HTML template
-├── package.json        # Project dependencies and scripts
-├── tailwind.config.js  # Tailwind CSS configuration
-└── vite.config.js      # Vite configuration
+│   ├── components/     # Componentes UI reutilizáveis
+│   ├── pages/          # Componentes de página
+│   ├── styles/         # Estilos globais e configuração Tailwind
+│   ├── utils/          # Serviços e utilitários
+│   ├── App.jsx         # Componente principal da aplicação
+│   ├── Routes.jsx      # Rotas da aplicação
+│   └── index.jsx       # Ponto de entrada da aplicação
+├── .env                # Variáveis de ambiente
+├── index.html          # Template HTML
+├── package.json        # Dependências e scripts do projeto
+├── tailwind.config.js  # Configuração do Tailwind CSS
+└── vite.config.mjs     # Configuração do Vite
 ```
 
-## 🧩 Adding Routes
+## 🧩 Adicionando Rotas
 
-To add new routes to the application, update the `Routes.jsx` file:
+Para adicionar novas rotas à aplicação, atualize o arquivo `Routes.jsx`:
 
 ```jsx
 import { useRoutes } from "react-router-dom";
-import HomePage from "pages/HomePage";
-import AboutPage from "pages/AboutPage";
+import Dashboard from "pages/dashboard";
+import GameRooms from "pages/game-rooms";
 
 const ProjectRoutes = () => {
   let element = useRoutes([
-    { path: "/", element: <HomePage /> },
-    { path: "/about", element: <AboutPage /> },
-    // Add more routes as needed
+    { path: "/", element: <SteamLoginPage /> },
+    { path: "/dashboard", element: <Dashboard /> },
+    // Adicione mais rotas conforme necessário
   ]);
 
   return element;
 };
 ```
 
-## 🎨 Styling
+## 🎨 Estilização
 
-This project uses Tailwind CSS for styling. The configuration includes:
+Este projeto usa Tailwind CSS para estilização. A configuração inclui:
 
-- Forms plugin for form styling
-- Typography plugin for text styling
-- Aspect ratio plugin for responsive elements
-- Container queries for component-specific responsive design
-- Fluid typography for responsive text
-- Animation utilities
+- Plugin de formulários para estilização de formulários
+- Plugin de tipografia para estilização de texto
+- Plugin de proporção para elementos responsivos
+- Consultas de contêiner para design responsivo específico de componentes
+- Tipografia fluida para texto responsivo
+- Utilitários de animação
 
-## 📱 Responsive Design
+## 📱 Design Responsivo
 
-The app is built with responsive design using Tailwind CSS breakpoints.
+O aplicativo é construído com design responsivo usando os breakpoints do Tailwind CSS.
 
 
-## 📦 Deployment
+## 📦 Implantação
 
-Build the application for production:
+Construa a aplicação para produção:
 
 ```bash
 npm run build
 ```
 
-## 🙏 Acknowledgments
+## 📋 Lista de Funcionalidades e Botões
 
-- Powered by React and Vite
-- Styled with Tailwind CSS
+### Autenticação e Registro
+- [x] Login com Steam
+- [x] Registro com email
+- [x] Confirmação de email
+- [x] Recuperação de senha
+- [x] Logout
+
+### Dashboard
+- [x] Visualização de saldo de moedas
+- [x] Botão de depósito
+- [x] Botão de perfil
+- [x] Lista de lobbies disponíveis
+- [x] Filtros de lobbies (dificuldade, taxa de entrada, jogadores)
+- [x] Botão de criar sala
+- [x] Botão de entrar em sala
+- [x] Notificações do sistema
+- [x] Visão geral de estatísticas
+
+### Salas de Jogo (Game Rooms)
+- [x] Lista de salas disponíveis
+- [x] Filtros de salas
+- [x] Botão de criar sala
+- [x] Botão de entrar em sala
+- [x] Informações de taxa de entrada e prêmio
+- [x] Contador de jogadores
+
+### Lobby de Quiz
+- [x] Lista de participantes
+- [x] Chat da sala
+- [x] Botão de pronto/não pronto
+- [x] Botão de sair do lobby
+- [x] Controles do host (iniciar jogo, configurações)
+- [x] Modal de taxa de entrada
+- [x] Temporizador de início
+
+### Quiz ao Vivo
+- [x] Exibição de perguntas
+- [x] Temporizador de resposta
+- [x] Opções de resposta
+- [x] Pontuação atual
+- [x] Lista de participantes com status
+- [x] Indicador de progresso do quiz
+- [x] Botão de sair do quiz
+- [x] Modal de dobrar ou nada
+
+### Tabelas de Classificação
+- [x] Classificação global
+- [x] Filtros de classificação
+- [x] Estatísticas pessoais
+- [x] Botões de navegação de página
+- [x] Indicador de posição atual do usuário
+
+### Configurações de Perfil
+- [x] Edição de perfil
+- [x] Integração com Steam
+- [x] Configurações de privacidade
+- [x] Preferências de notificação
+- [x] Preferências de exibição
+- [x] Configurações de segurança (senha, 2FA)
+- [x] Gerenciamento de conta (exportar dados, excluir conta)
+
+### Administração
+- [x] Login de administrador
+- [x] Painel de controle
+- [x] Gerenciamento de usuários
+- [x] Gerenciamento de quizzes
+- [x] Relatórios e estatísticas
+
+## 🙏 Agradecimentos
+
+- Desenvolvido com React e Vite
+- Estilizado com Tailwind CSS
 

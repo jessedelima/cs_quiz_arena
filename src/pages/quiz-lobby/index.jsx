@@ -257,51 +257,14 @@ const QuizLobby = () => {
     });
   };
 
-  const handleConfirmEntry = async () => {
+  const handleConfirmEntry = () => {
     setShowEntryModal(false);
-    
-    try {
-      // Processar o pagamento da taxa de entrada
-      await placeBet(currentUser.id, lobbyData.entryFee, lobbyData.id);
-      
-      // Entrar na sala
-      const updatedRoom = await joinGameRoom(lobbyData.id, currentUser.id);
-      
-      // Atualizar dados da sala
-      if (updatedRoom) {
-        setLobbyData(updatedRoom);
-        
-        // Atualizar a lista de participantes
-        const participantsData = updatedRoom.participants.map(p => ({
-          id: p.userId,
-          username: p.username,
-          avatar: p.avatar,
-          isHost: p.userId === updatedRoom.creatorId,
-          isReady: p.isReady,
-          isOnline: true,
-          level: p.level || 1,
-          wins: p.wins || 0
-        }));
-        
-        setParticipants(participantsData);
-      }
-      
-      addNotification({
-        type: 'success',
-        title: 'Pagamento confirmado',
-        message: `Você apostou ${lobbyData.entryFee} moedas para entrar na sala.`,
-        duration: 3000
-      });
-    } catch (error) {
-      console.error('Erro ao processar pagamento:', error);
-      addNotification({
-        type: 'error',
-        title: 'Erro no pagamento',
-        message: error.message || 'Não foi possível processar o pagamento.',
-        duration: 5000
-      });
-      navigate('/game-rooms');
-    }
+    addNotification({
+      type: 'success',
+      title: 'Entrada confirmada!',
+      message: `${lobbyData?.entryFee} coins foram descontados do seu saldo.`,
+      duration: 3000
+    });
   };
 
   const handleCancelEntry = () => {
@@ -348,7 +311,7 @@ const QuizLobby = () => {
                     activeTab === 'participants' ?'bg-primary text-primary-foreground' :'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  Participantes ({participants?.length}/{lobbyData?.maxPlayers})
+                  Participantes ({participants?.length})
                 </button>
                 <button
                   onClick={() => setActiveTab('chat')}
@@ -394,9 +357,6 @@ const QuizLobby = () => {
                   onUpdateSettings={handleUpdateSettings}
                   lobbySettings={lobbyData}
                 />
-                <div className="mt-6">
-                  <BettingInfo room={lobbyData} currentUser={currentUser} />
-                </div>
               </div>
             )}
           </div>

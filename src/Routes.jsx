@@ -9,11 +9,7 @@ import SteamLoginPage from './pages/steam-login';
 import Dashboard from './pages/dashboard';
 import LeaderboardsPage from './pages/leaderboards';
 import ProfileSettings from './pages/profile-settings';
-import RegisterPage from './pages/register';
-import EmailConfirmationPage from './pages/email-confirmation';
 import GameRoomsPage from './pages/game-rooms';
-import AdminDashboard from './pages/admin';
-import AdminLogin from './pages/admin-login';
 
 const Routes = () => {
   return (
@@ -28,14 +24,11 @@ const Routes = () => {
         <Route path="/live-quiz/:quizId" element={<LiveQuiz />} />
         <Route path="/live-quiz" element={<LiveQuiz />} />
         <Route path="/steam-login" element={<SteamLoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
+        {/* Rotas removidas temporariamente */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game-rooms" element={<GameRoomsPage />} />
         <Route path="/leaderboards" element={<LeaderboardsPage />} />
         <Route path="/profile-settings" element={<ProfileSettings />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="*" element={<NotFound />} />
       </RouterRoutes>
       </ErrorBoundary>

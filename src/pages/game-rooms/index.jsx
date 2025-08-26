@@ -30,18 +30,37 @@ const GameRoomsPage = () => {
   };
 
   useEffect(() => {
-    // Usar dados mockados em vez de buscar do serviço
-    setIsLoading(true);
-    setTimeout(() => {
-      setRooms(mockGameRooms);
-      setFilteredRooms(mockGameRooms);
-      setIsLoading(false);
-    }, 500); // Simular tempo de carregamento
+    loadRooms();
   }, []);
 
   useEffect(() => {
     applyFilters();
   }, [filters, rooms]);
+
+  const getGameRooms = async () => {
+    try {
+      // Tenta buscar salas do servidor
+      const rooms = await fetchGameRooms();
+      return rooms;
+    } catch (error) {
+      console.error('Erro ao buscar salas do servidor, usando dados mockados:', error);
+      // Fallback para dados mockados
+      return mockGameRooms;
+    }
+  };
+
+  const loadRooms = async () => {
+    setIsLoading(true);
+    try {
+      const gameRooms = await getGameRooms();
+      setRooms(gameRooms);
+      setFilteredRooms(gameRooms);
+    } catch (error) {
+      console.error('Erro ao carregar salas de jogo:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const applyFilters = () => {
     let result = [...rooms];

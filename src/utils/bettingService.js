@@ -204,32 +204,6 @@ const withdrawFunds = (userId, amount) => {
   return transaction;
 };
 
-/**
- * Processa uma aposta de "Double or Nothing"
- * @param {string} userId - ID do usuário
- * @param {number} winnings - Valor do prêmio ganho
- * @param {string} newRoomId - ID da nova sala de jogo
- * @returns {Object} - Dados da transação
- */
-const doubleDownBet = (userId, winnings, newRoomId) => {
-  // Cria a transação
-  const transaction = {
-    id: `tx-${transactionIdCounter++}`,
-    userId,
-    type: 'double_down_bet',
-    amount: -winnings, // Valor negativo pois é uma saída
-    roomId: newRoomId,
-    timestamp: new Date(),
-    status: 'completed',
-    description: `Aposta Double or Nothing na sala ${newRoomId}`
-  };
-  
-  // Registra a transação
-  transactions.push(transaction);
-  
-  return transaction;
-};
-
 export {
   placeBet,
   distributeWinnings,
@@ -238,6 +212,5 @@ export {
   getUserTransactions,
   getUserBettingStats,
   addFunds,
-  withdrawFunds,
-  doubleDownBet
+  withdrawFunds
 };

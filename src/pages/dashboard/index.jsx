@@ -10,7 +10,6 @@ import LobbyFilters from './components/LobbyFilters';
 import StatsOverview from './components/StatsOverview';
 import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
-import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const navigate = useNavigate();

@@ -8,10 +8,6 @@ const PrimaryNavigation = ({
 }) => {
   const location = useLocation();
 
-  // Verificar se o usuário é administrador
-  const currentUser = JSON.parse(localStorage.getItem('cs_quiz_arena_current_user')) || {};
-  const isAdmin = currentUser?.isAdmin === true;
-  
   const navigationItems = [
     { 
       label: 'Dashboard', 
@@ -33,17 +29,7 @@ const PrimaryNavigation = ({
       icon: 'User',
       badge: null,
       tooltip: 'Account settings and Steam integration'
-    },
-    // Item de navegação para administradores
-    ...(isAdmin ? [
-      { 
-        label: 'Admin', 
-        path: '/admin', 
-        icon: 'Settings',
-        badge: null,
-        tooltip: 'Painel de administração'
-      }
-    ] : [])
+    }
   ];
 
   const isActiveRoute = (path) => location?.pathname === path;

@@ -13,20 +13,20 @@ const QuickActions = ({
 
   const quickActions = [
     {
-      id: 'game-rooms',
-      title: 'Salas de Apostas',
-      description: 'Jogue e ganhe moedas',
-      icon: 'Coins',
-      color: 'var(--color-warning)',
-      onClick: () => navigate('/game-rooms')
-    },
-    {
       id: 'inventory',
       title: 'Inventário',
       description: 'Gerencie suas skins',
       icon: 'Package',
       color: 'var(--color-primary)',
       onClick: onInventoryClick
+    },
+    {
+      id: 'trade-url',
+      title: 'URL de Troca',
+      description: 'Configure sua URL',
+      icon: 'Link',
+      color: 'var(--color-accent)',
+      onClick: onTradeUrlClick
     },
     {
       id: 'deposit',

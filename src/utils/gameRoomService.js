@@ -470,10 +470,10 @@ const getGameRoomById = (roomId) => {
  * @returns {Promise<Array>} - Promise com a lista de salas
  */
 const fetchGameRooms = async () => {
-  // Simulação de chamada assíncrona
+  // Simula uma chamada de API
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(getAvailableRooms());
+      resolve(gameRooms);
     }, 500);
   });
 };
@@ -483,7 +483,6 @@ export {
   getAvailableRooms,
   getRoomById,
   getGameRoomById,
-  fetchGameRooms,
   joinRoom,
   leaveRoom,
   setPlayerReady,
@@ -491,5 +490,6 @@ export {
   submitAnswer,
   finishGame,
   offerDoubleDown,
-  createDoubleDownRoom
+  createDoubleDownRoom,
+  fetchGameRooms
 };

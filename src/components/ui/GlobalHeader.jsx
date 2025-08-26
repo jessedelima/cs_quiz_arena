@@ -13,9 +13,6 @@ const GlobalHeader = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  // Verificar se o usuário é administrador
-  const isAdmin = user?.isAdmin === true;
-  
   const navigationItems = [
     { 
       label: 'Dashboard', 
@@ -34,16 +31,7 @@ const GlobalHeader = ({
       path: '/profile-settings', 
       icon: 'User',
       tooltip: 'Account settings and Steam integration'
-    },
-    // Item de navegação para administradores
-    ...(isAdmin ? [
-      { 
-        label: 'Admin', 
-        path: '/admin', 
-        icon: 'Settings',
-        tooltip: 'Painel de administração'
-      }
-    ] : [])
+    }
   ];
 
   const isActiveRoute = (path) => location?.pathname === path;

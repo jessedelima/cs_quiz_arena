@@ -38,7 +38,7 @@ const LobbyCard = ({
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-card-foreground mb-1">
+          <h3 className="text-lg font-semibold text-card-foreground mb-1 truncate">
             {lobby?.name}
           </h3>
           <div className="flex items-center space-x-2">
@@ -66,7 +66,7 @@ const LobbyCard = ({
             <Icon name="Coins" size={16} color="var(--color-warning)" />
             <span className="text-sm font-medium text-muted-foreground">Taxa</span>
           </div>
-          <div className="text-lg font-bold text-warning font-mono">
+          <div className="text-lg font-bold text-warning font-mono truncate">
             {lobby?.entryFee?.toLocaleString('pt-BR')}
           </div>
         </div>
@@ -76,7 +76,7 @@ const LobbyCard = ({
             <Icon name="Trophy" size={16} color="var(--color-accent)" />
             <span className="text-sm font-medium text-muted-foreground">Prêmio</span>
           </div>
-          <div className="text-lg font-bold text-accent font-mono">
+          <div className="text-lg font-bold text-accent font-mono truncate">
             {lobby?.prizePool?.toLocaleString('pt-BR')}
           </div>
         </div>

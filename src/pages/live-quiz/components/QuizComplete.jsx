@@ -166,7 +166,7 @@ const QuizComplete = ({
         
         <Button
           variant="secondary"
-          onClick={() => navigate('/quiz-lobby')}
+          onClick={() => navigate('/game-rooms')}
           iconName="RotateCcw"
           iconPosition="left"
           className="flex-1"

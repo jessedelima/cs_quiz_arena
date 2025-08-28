@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
+import GoogleLoginButton from '../../../components/GoogleLoginButton';
+import { loginWithGoogle } from '../../../utils/authService';
 
 const SteamLoginForm = ({ onLogin = () => {} }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSteamLogin = async () => {
@@ -25,12 +28,34 @@ const SteamLoginForm = ({ onLogin = () => {} }) => {
         coins: 1250
       };
 
+      // Salvar usuário no localStorage com a chave correta
+      localStorage.setItem('cs_quiz_arena_current_user', JSON.stringify(mockUser));
       onLogin(mockUser);
       navigate('/dashboard');
     } catch (err) {
       setError('Falha na autenticação Steam. Tente novamente.');
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  const handleGoogleLogin = async (tokenResponse) => {
+    setGoogleLoading(true);
+    setError('');
+    
+    try {
+      const result = await loginWithGoogle(tokenResponse);
+      
+      if (result.success) {
+        onLogin(result.user);
+        navigate('/dashboard');
+      } else {
+        setError(result.error || 'Falha na autenticação com Google. Tente novamente.');
+      }
+    } catch (err) {
+      setError('Falha na autenticação com Google. Tente novamente.');
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -82,7 +107,28 @@ const SteamLoginForm = ({ onLogin = () => {} }) => {
           <p className="text-xs text-muted-foreground mb-4">
             Você será redirecionado para o Steam para fazer login com segurança
           </p>
-          <div className="border-t border-border pt-4 mt-2">
+          <div className="mt-4">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                Ou continue com
+              </span>
+            </div>
+          </div>
+          
+          <div className="mt-4">
+            <GoogleLoginButton 
+              onSuccess={handleGoogleLogin}
+              onError={(error) => setError('Falha na autenticação com Google. Tente novamente.')}
+              text="Entrar com Google"
+              className="mb-3"
+            />
+          </div>
+          
+          <div className="border-t border-border pt-4 mt-4">
             <p className="text-sm text-muted-foreground">
               Não tem uma conta?{" "}
               <a href="/register" className="text-primary hover:underline">
@@ -90,6 +136,7 @@ const SteamLoginForm = ({ onLogin = () => {} }) => {
               </a>
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>

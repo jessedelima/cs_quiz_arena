@@ -232,12 +232,12 @@ const QuizLobby = () => {
       addNotification({
         type: 'success',
         title: 'Quiz iniciado!',
-        message: 'Redirecionando para o quiz...',
+        message: 'Redirecionando para a sala de espera...',
         duration: 2000
       });
       
       setTimeout(() => {
-        navigate('/live-quiz', { 
+        navigate(`/waiting-room/${lobbyData.id}`, { 
           state: { 
             lobbyData, 
             participants: participants?.filter(p => p?.isReady) 

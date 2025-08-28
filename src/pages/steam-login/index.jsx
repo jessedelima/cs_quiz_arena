@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../../components/AppIcon';
 import SteamLoginForm from './components/SteamLoginForm';
 import ValueProposition from './components/ValueProposition';
@@ -10,11 +10,19 @@ import LoginFooter from './components/LoginFooter';
 const SteamLoginPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState('pt-BR');
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('cs-quiz-language') || 'pt-BR';
     setCurrentLanguage(savedLanguage);
-  }, []);
+    
+    // Verificar se o usuário já está logado
+    const currentUser = localStorage.getItem('cs_quiz_arena_current_user');
+    if (currentUser) {
+      // Se já estiver logado, redirecionar para o dashboard
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleLanguageChange = (languageCode) => {
     setCurrentLanguage(languageCode);

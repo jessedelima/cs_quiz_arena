@@ -1,19 +1,15 @@
 /**
  * Serviço de autenticação para gerenciar usuários, login e registro
  * Este é um serviço simulado que usa localStorage para persistência
- * Integrado com backendService para verificação de token e gerenciamento de usuário
  */
-import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
-import { verifyToken, createOrUpdateUser } from './backendService';
-import tokenService from './tokenService';
 
 // Chaves para armazenamento no localStorage
 const STORAGE_KEYS = {
   USERS: 'cs_quiz_arena_users',
   CURRENT_USER: 'cs_quiz_arena_current_user',
   PENDING_CONFIRMATIONS: 'cs_quiz_arena_pending_confirmations',
-  ADMIN_USER: 'cs_quiz_arena_admin_user'
+  ADMIN_USER: 'cs_quiz_arena_admin_user',
+  GOOGLE_USERS: 'cs_quiz_arena_google_users'
 };
 
 // Credenciais do administrador
@@ -77,6 +73,15 @@ const getPendingConfirmations = () => {
  */
 const savePendingConfirmations = (confirmations) => {
   localStorage.setItem(STORAGE_KEYS.PENDING_CONFIRMATIONS, JSON.stringify(confirmations));
+};
+
+/**
+ * Obtém o usuário atualmente logado
+ * @returns {Object|null} - Dados do usuário logado ou null se não houver usuário logado
+ */
+export const getLoggedInUser = () => {
+  const userJson = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+  return userJson ? JSON.parse(userJson) : null;
 };
 
 /**
@@ -191,15 +196,10 @@ export const loginWithEmail = (email, password) => {
     const adminUser = { ...admin, password: undefined };
     localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(adminUser));
     
-    // Simular geração de token JWT para admin
-    const token = generateMockJWT(adminUser);
-    tokenService.setToken(token);
-    
     return { 
       success: true, 
       message: 'Login de administrador realizado com sucesso.',
       user: adminUser,
-      token,
       isAdmin: true
     };
   }
@@ -220,16 +220,97 @@ export const loginWithEmail = (email, password) => {
   const userWithoutPassword = { ...user, password: undefined };
   localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(userWithoutPassword));
   
-  // Simular geração de token JWT
-  const token = generateMockJWT(userWithoutPassword);
-  tokenService.setToken(token);
-  
   return { 
     success: true, 
     message: 'Login realizado com sucesso.',
-    user: userWithoutPassword,
-    token
+    user: userWithoutPassword
   };
+};
+
+/**
+ * Obtém a lista de usuários do Google
+ * @returns {Array} - Lista de usuários do Google
+ */
+const getGoogleUsers = () => {
+  const usersJson = localStorage.getItem(STORAGE_KEYS.GOOGLE_USERS);
+  return usersJson ? JSON.parse(usersJson) : [];
+};
+
+/**
+ * Salva a lista de usuários do Google no localStorage
+ * @param {Array} users - Lista de usuários do Google
+ */
+const saveGoogleUsers = (users) => {
+  localStorage.setItem(STORAGE_KEYS.GOOGLE_USERS, JSON.stringify(users));
+};
+
+/**
+ * Faz login com o Google
+ * @param {Object} tokenResponse - Resposta do token do Google
+ * @returns {Promise<Object>} - Resultado do login
+ */
+export const loginWithGoogle = async (tokenResponse) => {
+  try {
+    // Em um ambiente real, enviaríamos o token para o backend para verificação
+    // Aqui vamos simular a verificação e obtenção dos dados do usuário
+    
+    // Simular a obtenção dos dados do usuário a partir do token
+    // Em um ambiente real, isso seria feito pelo backend
+    const userData = {
+      googleId: `google_${Date.now()}`, // Simulando um ID único
+      email: `user_${Date.now()}@gmail.com`, // Simulando um email
+      name: `Usuário Google ${Math.floor(Math.random() * 1000)}`, // Nome aleatório
+      picture: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`, // Avatar aleatório
+      accessToken: tokenResponse.access_token
+    };
+    
+    // Verificar se o usuário já existe
+    const googleUsers = getGoogleUsers();
+    let user = googleUsers.find(u => u.googleId === userData.googleId);
+    
+    if (!user) {
+      // Criar novo usuário
+      user = {
+        id: Date.now().toString(),
+        googleId: userData.googleId,
+        username: userData.name,
+        email: userData.email,
+        avatar: userData.picture,
+        emailConfirmed: true, // Emails do Google já são confirmados
+        createdAt: Date.now(),
+        coins: 100, // Moedas iniciais
+        stats: {
+          quizzesTaken: 0,
+          correctAnswers: 0,
+          totalAnswers: 0,
+          bestScore: 0
+        }
+      };
+      
+      googleUsers.push(user);
+      saveGoogleUsers(googleUsers);
+      
+      // Adicionar também à lista geral de usuários
+      const allUsers = getUsers();
+      allUsers.push(user);
+      saveUsers(allUsers);
+    }
+    
+    // Salvar usuário atual no localStorage
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+    
+    return { 
+      success: true, 
+      message: 'Login com Google realizado com sucesso.',
+      user
+    };
+  } catch (error) {
+    console.error('Erro ao fazer login com Google:', error);
+    return { 
+      success: false, 
+      error: 'Falha ao autenticar com o Google. Tente novamente.'
+    };
+  }
 };
 
 /**
@@ -239,66 +320,6 @@ export const loginWithEmail = (email, password) => {
 export const getCurrentUser = () => {
   const userJson = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
   return userJson ? JSON.parse(userJson) : null;
-};
-
-/**
- * Obtém o token JWT armazenado
- * @returns {string|null} - Token JWT ou null se não houver
- */
-export const getAuthToken = () => {
-  return tokenService.getToken();
-};
-
-/**
- * Verifica se o token JWT é válido
- * @returns {Promise<boolean>} - True se o token for válido, false caso contrário
- */
-export const isTokenValid = async () => {
-  const token = getAuthToken();
-  if (!token) return false;
-  
-  try {
-    // Primeiro verifica localmente se o token não expirou
-    const decoded = jwtDecode(token);
-    if (decoded.exp <= Date.now() / 1000) {
-      return false;
-    }
-    
-    // Em seguida, verifica com o backend
-    const response = await verifyToken();
-    return response.valid;
-  } catch (error) {
-    console.error('Erro ao verificar token:', error);
-    return false;
-  }
-};
-
-/**
- * Gera um token JWT simulado
- * @param {Object} user - Dados do usuário
- * @returns {string} - Token JWT simulado
- */
-const generateMockJWT = (user) => {
-  // Em um ambiente real, este token seria gerado pelo backend
-  const header = {
-    alg: 'HS256',
-    typ: 'JWT'
-  };
-  
-  const payload = {
-    sub: user.id || user.email,
-    name: user.username,
-    email: user.email,
-    isAdmin: user.isAdmin || false,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hora
-  };
-  
-  const encodedHeader = btoa(JSON.stringify(header));
-  const encodedPayload = btoa(JSON.stringify(payload));
-  const signature = btoa(`${encodedHeader}.${encodedPayload}`);
-  
-  return `${encodedHeader}.${encodedPayload}.${signature}`;
 };
 
 /**
@@ -315,91 +336,6 @@ export const isCurrentUserAdmin = () => {
  */
 export const logout = () => {
   localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-  tokenService.removeToken();
-};
-
-/**
- * Processa o login com Google
- * @param {Object} googleData - Dados retornados pelo Google após autenticação
- * @returns {Promise<Object>} - Resultado do login
- */
-export const loginWithGoogle = async (googleData) => {
-  try {
-    // Em um ambiente real, enviaríamos o token para o backend para validação
-    // e o backend retornaria um token JWT após verificar com o Google
-    // Aqui vamos integrar com o backendService
-    
-    // Decodificar o token para obter as informações do usuário
-    const decodedToken = jwtDecode(googleData.credential);
-    
-    // Preparar os dados do usuário para enviar ao backend
-    const userDataForBackend = {
-      name: decodedToken.name,
-      email: decodedToken.email,
-      photoUrl: decodedToken.picture,
-      googleId: decodedToken.sub,
-      provider: 'google'
-    };
-    
-    // Enviar os dados para o backend
-    const backendResponse = await createOrUpdateUser(userDataForBackend);
-    
-    if (!backendResponse.success) {
-      return { success: false, error: backendResponse.message || 'Erro ao criar usuário' };
-    }
-    
-    const user = backendResponse.user;
-    
-    // Também atualizar o armazenamento local para compatibilidade
-    const users = getUsers();
-    const existingUserIndex = users.findIndex(u => u.email === user.email);
-    
-    if (existingUserIndex >= 0) {
-      // Atualizar o usuário existente
-      users[existingUserIndex] = { ...users[existingUserIndex], ...user };
-    } else {
-      // Adicionar o novo usuário com os dados padrão
-      const newUser = {
-        id: user.id || Date.now().toString(),
-        username: user.name || decodedToken.name,
-        email: user.email || decodedToken.email,
-        emailConfirmed: true,
-        createdAt: Date.now(),
-        coins: 100, // Moedas iniciais
-        avatar: user.photoUrl || decodedToken.picture, // Avatar do Google
-        googleId: user.googleId || decodedToken.sub,
-        stats: {
-          quizzesTaken: 0,
-          correctAnswers: 0,
-          totalAnswers: 0,
-          bestScore: 0
-        }
-      };
-      users.push(newUser);
-    }
-    saveUsers(users);
-    
-    // Salvar usuário atual no localStorage
-    const userWithoutPassword = { ...user, password: undefined };
-    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(userWithoutPassword));
-    
-    // Simular geração de token JWT
-    const token = generateMockJWT(userWithoutPassword);
-    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-    
-    return { 
-      success: true, 
-      message: 'Login com Google realizado com sucesso.',
-      user: userWithoutPassword,
-      token
-    };
-  } catch (error) {
-    console.error('Erro ao fazer login com Google:', error);
-    return { 
-      success: false, 
-      error: 'Falha na autenticação com Google. Tente novamente.'
-    };
-  }
 };
 
 /**
@@ -459,5 +395,123 @@ export const resetPassword = (token, email, newPassword) => {
   return { 
     success: true, 
     message: 'Senha redefinida com sucesso. Você já pode fazer login com sua nova senha.'
+  };
+};
+
+/**
+ * Atualiza os dados do perfil do usuário
+ * @param {Object} userData - Novos dados do usuário
+ * @returns {Object} - Resultado da atualização
+ */
+export const updateUserProfile = (userData) => {
+  const currentUser = getCurrentUser();
+  
+  if (!currentUser) {
+    return { success: false, error: 'Usuário não está logado.' };
+  }
+  
+  // Atualizar usuário na lista de usuários
+  const users = getUsers();
+  const userIndex = users.findIndex(u => u.id === currentUser.id);
+  
+  if (userIndex === -1) {
+    // Verificar se é um usuário do Google
+    const googleUsers = getGoogleUsers();
+    const googleUserIndex = googleUsers.findIndex(u => u.id === currentUser.id);
+    
+    if (googleUserIndex === -1) {
+      return { success: false, error: 'Usuário não encontrado.' };
+    }
+    
+    // Atualizar usuário do Google
+    const updatedUser = {
+      ...googleUsers[googleUserIndex],
+      ...userData,
+      // Preservar campos que não devem ser alterados pelo usuário
+      id: currentUser.id,
+      googleId: googleUsers[googleUserIndex].googleId,
+      email: googleUsers[googleUserIndex].email,
+      emailConfirmed: googleUsers[googleUserIndex].emailConfirmed
+    };
+    
+    googleUsers[googleUserIndex] = updatedUser;
+    saveGoogleUsers(googleUsers);
+    
+    // Atualizar também na lista geral de usuários
+    const allUserIndex = users.findIndex(u => u.id === currentUser.id);
+    if (allUserIndex !== -1) {
+      users[allUserIndex] = updatedUser;
+      saveUsers(users);
+    }
+    
+    // Atualizar usuário atual no localStorage
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updatedUser));
+    
+    return { 
+      success: true, 
+      message: 'Perfil atualizado com sucesso.',
+      user: updatedUser
+    };
+  }
+  
+  // Atualizar usuário normal
+  const updatedUser = {
+    ...users[userIndex],
+    ...userData,
+    // Preservar campos que não devem ser alterados pelo usuário
+    id: currentUser.id,
+    email: users[userIndex].email,
+    emailConfirmed: users[userIndex].emailConfirmed
+  };
+  
+  users[userIndex] = updatedUser;
+  saveUsers(users);
+  
+  // Atualizar usuário atual no localStorage
+  localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updatedUser));
+  
+  return { 
+    success: true, 
+    message: 'Perfil atualizado com sucesso.',
+    user: updatedUser
+  };
+};
+
+/**
+ * Atualiza a foto de perfil do usuário
+ * @param {string} avatarUrl - URL da nova foto de perfil
+ * @returns {Object} - Resultado da atualização
+ */
+export const updateUserAvatar = (avatarUrl) => {
+  return updateUserProfile({ avatar: avatarUrl });
+};
+
+/**
+ * Exclui a conta do usuário atual
+ * @returns {Object} - Resultado da exclusão
+ */
+export const deleteUserAccount = () => {
+  const currentUser = getCurrentUser();
+  
+  if (!currentUser) {
+    return { success: false, error: 'Usuário não está logado.' };
+  }
+  
+  // Remover usuário da lista de usuários
+  const users = getUsers();
+  const updatedUsers = users.filter(u => u.id !== currentUser.id);
+  saveUsers(updatedUsers);
+  
+  // Remover usuário da lista de usuários do Google, se aplicável
+  const googleUsers = getGoogleUsers();
+  const updatedGoogleUsers = googleUsers.filter(u => u.id !== currentUser.id);
+  saveGoogleUsers(updatedGoogleUsers);
+  
+  // Fazer logout
+  logout();
+  
+  return { 
+    success: true, 
+    message: 'Sua conta foi excluída com sucesso.'
   };
 };

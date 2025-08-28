@@ -8,6 +8,7 @@ import GameRoomCard from './components/GameRoomCard';
 import CreateGameRoomModal from './components/CreateGameRoomModal';
 import { fetchGameRooms } from '../../utils/gameRoomService';
 import { mockGameRooms } from '../../utils/mockData';
+import websocketService from '../../api/websocketService';
 const GameRoomsPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +32,34 @@ const GameRoomsPage = () => {
 
   useEffect(() => {
     loadRooms();
+    
+    // Conectar ao WebSocket para receber atualizações em tempo real
+    websocketService.connect();
+    
+    // Configurar listeners para eventos de salas
+    const unsubscribeRoomCreated = websocketService.on('room_created', (data) => {
+      setRooms(prevRooms => [data.room, ...prevRooms]);
+    });
+    
+    const unsubscribeRoomUpdated = websocketService.on('room_updated', (data) => {
+      setRooms(prevRooms => 
+        prevRooms.map(room => room.id === data.room.id ? data.room : room)
+      );
+    });
+    
+    const unsubscribeRoomDeleted = websocketService.on('room_deleted', (data) => {
+      setRooms(prevRooms => 
+        prevRooms.filter(room => room.id !== data.roomId)
+      );
+    });
+    
+    // Limpar listeners quando o componente for desmontado
+    return () => {
+      unsubscribeRoomCreated();
+      unsubscribeRoomUpdated();
+      unsubscribeRoomDeleted();
+      websocketService.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -134,7 +163,19 @@ const GameRoomsPage = () => {
   const handleCreateRoom = (newRoom) => {
     setRooms(prev => [newRoom, ...prev]);
     console.log('Sala criada com sucesso!');
-    navigate(`/quiz-lobby/${newRoom.id}`);
+    
+    // Enviar evento de sala criada via WebSocket
+    websocketService.send({
+      type: 'room_created',
+      payload: {
+        room: newRoom
+      },
+      roomId: newRoom.id,
+      userId: currentUser.id,
+      timestamp: new Date().toISOString()
+    });
+    
+    navigate(`/waiting-room/${newRoom.id}`);
   };
 
   const handleJoinSuccess = (updatedRoom) => {

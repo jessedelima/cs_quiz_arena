@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
+import websocketService from '../../../api/websocketService';
 
 const CreateGameRoomModal = ({ isOpen, onClose, onCreateRoom }) => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,13 @@ const CreateGameRoomModal = ({ isOpen, onClose, onCreateRoom }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Garantir que o WebSocket esteja conectado
+    if (!websocketService.isConnected()) {
+      websocketService.connect();
+    }
+    
+    // Criar a sala e notificar o componente pai
     onCreateRoom(formData);
     onClose();
   };

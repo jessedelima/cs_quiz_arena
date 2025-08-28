@@ -188,7 +188,7 @@ const Dashboard = () => {
     // Simulate API call
     setTimeout(() => {
       setJoiningLobby(null);
-      navigate('/quiz-lobby', { state: { lobbyId } });
+      navigate(`/waiting-room/${lobbyId}`);
     }, 1500);
   };
 
@@ -215,7 +215,7 @@ const Dashboard = () => {
 
   const handleNotificationAction = (notificationId, action) => {
     if (action?.label === 'Aceitar') {
-      navigate('/quiz-lobby');
+      navigate('/waiting-room/lobby-456');
     }
     handleNotificationDismiss(notificationId);
   };

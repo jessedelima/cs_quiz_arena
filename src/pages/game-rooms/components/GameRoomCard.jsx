@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
+import websocketService from '../../../api/websocketService';
 
-const GameRoomCard = ({ room }) => {
+const GameRoomCard = ({ room, currentUser }) => {
   const navigate = useNavigate();
 
   const handleJoinRoom = () => {
-    navigate(`/quiz-lobby/${room.id}`);
+    // Conectar ao WebSocket antes de entrar na sala
+    websocketService.connect();
+    
+    // Navegar para a sala de espera
+    navigate(`/waiting-room/${room.id}`);
   };
 
   return (

@@ -1,55 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import GlobalHeader from '../../components/ui/GlobalHeader';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
-import ProfileForm from '../../components/ProfileForm/ProfileForm';
-import DeleteAccountSection from '../../components/DeleteAccountSection/DeleteAccountSection';
-import { getCurrentUser } from '../../utils/authService';
 
 const ProfileSettings = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUserData = () => {
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        // Redirecionar para login se não estiver autenticado
-        navigate('/login');
-      }
-      setLoading(false);
-    };
-
-    fetchUserData();
-  }, [navigate]);
 
   const handleGoBack = () => {
     navigate('/dashboard');
   };
-
-  const handleProfileUpdate = (updatedUser) => {
-    setUser(updatedUser);
-  };
-
-  const handleAccountDeleted = () => {
-    // Redirecionar para a página inicial após exclusão da conta
-    navigate('/');
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <GlobalHeader />
-        <div className="container mx-auto px-4 py-8 text-center">
-          <p className="text-muted-foreground">Carregando...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -64,9 +24,15 @@ const ProfileSettings = () => {
           </Button>
         </div>
         
-        <div className="bg-card border border-border rounded-lg p-6">
-          <ProfileForm user={user} onProfileUpdate={handleProfileUpdate} />
-          <DeleteAccountSection onAccountDeleted={handleAccountDeleted} />
+        <div className="bg-card border border-border rounded-lg p-6 text-center">
+          <Icon name="settings" className="mx-auto mb-4" size={48} />
+          <h2 className="text-xl font-semibold mb-2">Configurações em Desenvolvimento</h2>
+          <p className="text-muted-foreground mb-6">
+            Esta funcionalidade está sendo implementada e estará disponível em breve.
+          </p>
+          <Button onClick={handleGoBack} variant="primary">
+            Voltar ao Dashboard
+          </Button>
         </div>
       </div>
     </div>

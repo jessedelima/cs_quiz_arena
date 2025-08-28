@@ -6,9 +6,9 @@ import { getRoomById, setPlayerReady, startGame } from '../../utils/gameRoomServ
 import './WaitingRoom.css';
 
 // Componentes
-import PlayerAvatar from '../PlayerAvatar/PlayerAvatar.jsx';
-import Button from '../Button/Button.jsx';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner.jsx';
+import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
+import Button from '../Button/Button';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import ChatBox from '../ChatBox/ChatBox';
 
 /**

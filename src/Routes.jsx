@@ -11,7 +11,7 @@ import Dashboard from './pages/dashboard';
 import LeaderboardsPage from './pages/leaderboards';
 import ProfileSettings from './pages/profile-settings';
 import GameRoomsPage from './pages/game-rooms';
-import WaitingRoom from './components/WaitingRoom/WaitingRoom';
+import TournamentRoom from './pages/tournament-room';
 import { getCurrentUser } from './utils/authService';
 
 // Componente para proteger rotas que requerem autenticação
@@ -75,9 +75,9 @@ const Routes = () => {
               <GameRoomsPage />
             </ProtectedRoute>
           } />
-          <Route path="/waiting-room/:roomId" element={
+          <Route path="/tournament-room/:roomId" element={
             <ProtectedRoute>
-              <WaitingRoom />
+              <TournamentRoom />
             </ProtectedRoute>
           } />
           <Route path="/leaderboards" element={

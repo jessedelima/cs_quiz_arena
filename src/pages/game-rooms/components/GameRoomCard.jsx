@@ -4,14 +4,10 @@ import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 import websocketService from '../../../api/websocketService';
 
-const GameRoomCard = ({ room, currentUser }) => {
+const GameRoomCard = ({ room }) => {
   const navigate = useNavigate();
 
   const handleJoinRoom = () => {
-    // Conectar ao WebSocket antes de entrar na sala
-    websocketService.connect();
-    
-    // Navegar para a sala de espera
     navigate(`/waiting-room/${room.id}`);
   };
 

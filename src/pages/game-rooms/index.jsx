@@ -163,18 +163,6 @@ const GameRoomsPage = () => {
   const handleCreateRoom = (newRoom) => {
     setRooms(prev => [newRoom, ...prev]);
     console.log('Sala criada com sucesso!');
-    
-    // Enviar evento de sala criada via WebSocket
-    websocketService.send({
-      type: 'room_created',
-      payload: {
-        room: newRoom
-      },
-      roomId: newRoom.id,
-      userId: currentUser.id,
-      timestamp: new Date().toISOString()
-    });
-    
     navigate(`/waiting-room/${newRoom.id}`);
   };
 

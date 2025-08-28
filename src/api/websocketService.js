@@ -273,39 +273,26 @@ class WebSocketService {
 
   /**
    * Envia uma mensagem para o servidor
-   * @param {string|object} typeOrMessage - Tipo da mensagem ou objeto completo da mensagem
-   * @param {object} [payload] - Dados da mensagem (opcional se typeOrMessage for um objeto)
+   * @param {string} type - Tipo da mensagem
+   * @param {object} payload - Dados da mensagem
    * @returns {boolean} - Sucesso do envio
    */
-  send(typeOrMessage, payload) {
+  send(type, payload = {}) {
     if (!this.connected || !this.socket || this.socket.readyState !== WebSocket.OPEN) {
       console.error('Tentativa de enviar mensagem sem conexão WebSocket ativa');
       return false;
     }
     
     try {
-      let message;
+      const message = { 
+        type, 
+        payload, 
+        roomId: this.roomId, 
+        userId: this.userId,
+        timestamp: Date.now()
+      };
       
-      // Verifica se o primeiro parâmetro é um objeto completo ou apenas o tipo
-      if (typeof typeOrMessage === 'object') {
-        message = {
-          ...typeOrMessage,
-          roomId: typeOrMessage.roomId || this.roomId,
-          userId: typeOrMessage.userId || this.userId,
-          timestamp: typeOrMessage.timestamp || Date.now()
-        };
-        console.log(`Enviando mensagem: ${message.type}`, message.payload);
-      } else {
-        message = { 
-          type: typeOrMessage, 
-          payload: payload || {}, 
-          roomId: this.roomId, 
-          userId: this.userId,
-          timestamp: Date.now()
-        };
-        console.log(`Enviando mensagem: ${typeOrMessage}`, payload);
-      }
-      
+      console.log(`Enviando mensagem: ${type}`, payload);
       this.socket.send(JSON.stringify(message));
       return true;
     } catch (error) {

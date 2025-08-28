@@ -24,13 +24,6 @@ const CreateGameRoomModal = ({ isOpen, onClose, onCreateRoom }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Garantir que o WebSocket esteja conectado
-    if (!websocketService.isConnected()) {
-      websocketService.connect();
-    }
-    
-    // Criar a sala e notificar o componente pai
     onCreateRoom(formData);
     onClose();
   };

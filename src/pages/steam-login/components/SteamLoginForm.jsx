@@ -16,25 +16,159 @@ const SteamLoginForm = ({ onLogin = () => {} }) => {
     setError('');
 
     try {
-      // Simulate Steam OpenID authentication
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Em um ambiente real, redirecionaríamos para a URL de autenticação do Steam
+      // Aqui vamos abrir uma nova janela simulando o processo de login do Steam
+      const steamLoginWindow = window.open('', 'SteamLogin', 'width=800,height=600,left=200,top=100');
       
-      // Mock successful authentication
-      const mockUser = {
-        steamId: '76561198123456789',
-        username: 'CS_ProPlayer',
-        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-        profileUrl: 'https://steamcommunity.com/id/cs_proplayer',
-        coins: 1250
-      };
+      if (!steamLoginWindow) {
+        throw new Error('Não foi possível abrir a janela de login do Steam. Verifique se os pop-ups estão permitidos.');
+      }
+      
+      // Criar conteúdo HTML para a janela de login do Steam
+      steamLoginWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Steam Login</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #1b2838;
+              color: #c6d4df;
+              margin: 0;
+              padding: 0;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+            }
+            .steam-login {
+              background-color: #2a3f5a;
+              border-radius: 4px;
+              padding: 20px;
+              width: 300px;
+              box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            }
+            .steam-logo {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            .form-group {
+              margin-bottom: 15px;
+            }
+            label {
+              display: block;
+              margin-bottom: 5px;
+              font-size: 14px;
+            }
+            input {
+              width: 100%;
+              padding: 8px;
+              border: 1px solid #366996;
+              background-color: #32404e;
+              color: #c6d4df;
+              border-radius: 2px;
+              box-sizing: border-box;
+            }
+            button {
+              width: 100%;
+              padding: 10px;
+              background-color: #66c0f4;
+              color: white;
+              border: none;
+              border-radius: 2px;
+              cursor: pointer;
+              font-weight: bold;
+            }
+            button:hover {
+              background-color: #5ba3d4;
+            }
+            .remember {
+              display: flex;
+              align-items: center;
+              font-size: 12px;
+              margin-bottom: 15px;
+            }
+            .remember input {
+              width: auto;
+              margin-right: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="steam-login">
+            <div class="steam-logo">
+              <img src="https://store.cloudflare.steamstatic.com/public/shared/images/header/logo_steam.svg" alt="Steam Logo" width="180">
+            </div>
+            <form id="steamLoginForm">
+              <div class="form-group">
+                <label for="username">Nome de usuário Steam</label>
+                <input type="text" id="username" name="username" required>
+              </div>
+              <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+              </div>
+              <div class="remember">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Lembrar meu login</label>
+              </div>
+              <button type="submit">Entrar</button>
+            </form>
+          </div>
+          <script>
+            document.getElementById('steamLoginForm').addEventListener('submit', function(e) {
+              e.preventDefault();
+              // Simular autenticação bem-sucedida após 1 segundo
+              setTimeout(function() {
+                window.opener.postMessage('steam-login-success', '*');
+                window.close();
+              }, 1000);
+            });
+          </script>
+        </body>
+        </html>
+      `);
+      
+      // Configurar listener para mensagem da janela de login
+      const handleLoginMessage = (event) => {
+        if (event.data === 'steam-login-success') {
+          // Remover o listener após o login bem-sucedido
+          window.removeEventListener('message', handleLoginMessage);
+          
+          // Mock successful authentication
+          const mockUser = {
+            steamId: '76561198123456789',
+            username: 'CS_ProPlayer',
+            avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+            profileUrl: 'https://steamcommunity.com/id/cs_proplayer',
+            coins: 1250
+          };
 
-      // Salvar usuário no localStorage com a chave correta
-      localStorage.setItem('cs_quiz_arena_current_user', JSON.stringify(mockUser));
-      onLogin(mockUser);
-      navigate('/dashboard');
+          // Salvar usuário no localStorage para que o ProtectedRoute funcione
+          localStorage.setItem('cs_quiz_arena_current_user', JSON.stringify(mockUser));
+          
+          onLogin(mockUser);
+          navigate('/dashboard');
+          setIsLoading(false);
+        }
+      };
+      
+      window.addEventListener('message', handleLoginMessage);
+      
+      // Configurar um timeout para fechar a janela se o usuário não fizer login
+      setTimeout(() => {
+        if (steamLoginWindow && !steamLoginWindow.closed) {
+          steamLoginWindow.close();
+          setError('Tempo limite de login excedido. Tente novamente.');
+          setIsLoading(false);
+          window.removeEventListener('message', handleLoginMessage);
+        }
+      }, 120000); // 2 minutos de timeout
+      
     } catch (err) {
-      setError('Falha na autenticação Steam. Tente novamente.');
-    } finally {
+      setError(err.message || 'Falha na autenticação Steam. Tente novamente.');
       setIsLoading(false);
     }
   };

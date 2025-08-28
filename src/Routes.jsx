@@ -6,6 +6,7 @@ import NotFound from "pages/NotFound";
 import QuizLobby from './pages/quiz-lobby';
 import LiveQuiz from './pages/live-quiz';
 import SteamLoginPage from './pages/steam-login';
+import RegisterPage from './pages/register';
 import Dashboard from './pages/dashboard';
 import LeaderboardsPage from './pages/leaderboards';
 import ProfileSettings from './pages/profile-settings';
@@ -24,6 +25,7 @@ const Routes = () => {
         <Route path="/live-quiz/:quizId" element={<LiveQuiz />} />
         <Route path="/live-quiz" element={<LiveQuiz />} />
         <Route path="/steam-login" element={<SteamLoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         {/* Rotas removidas temporariamente */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game-rooms" element={<GameRoomsPage />} />

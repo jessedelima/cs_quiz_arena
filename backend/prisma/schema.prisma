@@ -1,0 +1,330 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Usuário
+model User {
+  id          String   @id @default(cuid())
+  steamId     String?  @unique
+  email       String?  @unique
+  username    String   @unique
+  displayName String?
+  password    String?
+  avatar      String?
+  balance     Float    @default(0)
+  level       Int      @default(1)
+  xp          Int      @default(0)
+  rank        String   @default("Bronze")
+  country     String?
+  isVerified  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  isBanned    Boolean  @default(false)
+  banReason   String?
+  banExpiresAt DateTime?
+  role        String   @default("user")
+  lastLogin   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  gameRooms     GameRoom[]     @relation("HostedRooms")
+  participations RoomParticipant[]
+  transactions  Transaction[]
+  quizResults   QuizResult[]
+  quizAnswers   QuizAnswer[]
+  achievements  UserAchievement[]
+  reports       Report[]       @relation("ReportedBy")
+  reportedUsers Report[]       @relation("ReportedUser")
+  messages      ChatMessage[]
+  friendships   Friendship[]   @relation("User")
+  friendOf      Friendship[]   @relation("Friend")
+
+  @@map("users")
+}
+
+// Modelo de Sala de Jogo
+model GameRoom {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  category      String   // CS2, CSGO, CS1.6, etc.
+  difficulty    String   // easy, medium, hard
+  entryFee      Float    @default(0)
+  prizePool     Float    @default(0)
+  maxPlayers    Int      @default(10)
+  timePerQuestion Int    @default(15)
+  questionCount Int      @default(10)
+  status        String   @default("waiting") // waiting, active, completed
+  isPrivate     Boolean  @default(false)
+  password      String?
+  startTime     DateTime?
+  endTime       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relacionamentos
+  host          User             @relation("HostedRooms", fields: [hostId], references: [id])
+  hostId        String
+  participants  RoomParticipant[]
+  quiz          Quiz?
+  tournament    Tournament?      @relation(fields: [tournamentId], references: [id])
+  tournamentId  String?
+
+  @@map("game_rooms")
+}
+
+// Modelo de Participante da Sala
+model RoomParticipant {
+  id        String   @id @default(cuid())
+  isReady   Boolean  @default(false)
+  joinedAt  DateTime @default(now())
+  leftAt    DateTime?
+  isActive  Boolean  @default(true)
+
+  // Relacionamentos
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  gameRoom  GameRoom @relation(fields: [gameRoomId], references: [id])
+  gameRoomId String
+
+  @@unique([userId, gameRoomId])
+  @@map("room_participants")
+}
+
+// Modelo de Quiz
+model Quiz {
+  id            String   @id @default(cuid())
+  status        String   @default("waiting") // waiting, active, completed
+  currentQuestion Int    @default(0)
+  startTime     DateTime?
+  endTime       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relacionamentos
+  gameRoom      GameRoom     @relation(fields: [gameRoomId], references: [id])
+  gameRoomId    String       @unique
+  questions     QuizQuestion[]
+  results       QuizResult[]
+
+  @@map("quizzes")
+}
+
+// Modelo de Pergunta do Quiz
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  questionText  String
+  option1       String   // Primeira opção
+  option2       String   // Segunda opção
+  option3       String   // Terceira opção
+  option4       String   // Quarta opção
+  correctAnswer Int      // Índice da resposta correta (1-4)
+  image         String?
+  category      String
+  difficulty    String
+  points        Int      @default(100)
+  timeLimit     Int      @default(15)
+  order         Int
+  createdAt     DateTime @default(now())
+
+  // Relacionamentos
+  quiz          Quiz     @relation(fields: [quizId], references: [id])
+  quizId        String
+  answers       QuizAnswer[]
+
+  @@map("quiz_questions")
+}
+
+// Modelo de Resposta do Quiz
+model QuizAnswer {
+  id            String   @id @default(cuid())
+  selectedAnswer Int?
+  isCorrect     Boolean  @default(false)
+  points        Int      @default(0)
+  timeSpent     Int      // Tempo em segundos
+  answeredAt    DateTime @default(now())
+
+  // Relacionamentos
+  user          User         @relation(fields: [userId], references: [id])
+  userId        String
+  question      QuizQuestion @relation(fields: [questionId], references: [id])
+  questionId    String
+  result        QuizResult   @relation(fields: [resultId], references: [id])
+  resultId      String
+
+  @@map("quiz_answers")
+}
+
+// Modelo de Resultado do Quiz
+model QuizResult {
+  id            String   @id @default(cuid())
+  totalScore    Int      @default(0)
+  correctAnswers Int     @default(0)
+  totalQuestions Int     @default(0)
+  position      Int?     // Posição no ranking
+  prizeWon      Float    @default(0)
+  completedAt   DateTime @default(now())
+
+  // Relacionamentos
+  user          User         @relation(fields: [userId], references: [id])
+  userId        String
+  quiz          Quiz         @relation(fields: [quizId], references: [id])
+  quizId        String
+  answers       QuizAnswer[]
+
+  @@unique([userId, quizId])
+  @@map("quiz_results")
+}
+
+// Modelo de Transação
+model Transaction {
+  id            String   @id @default(cuid())
+  type          String   // deposit, withdrawal, entry_fee, prize, refund
+  amount        Float
+  status        String   @default("pending") // pending, completed, failed, cancelled
+  description   String?
+  paymentMethod String?  // pix, credit_card, steam_wallet
+  externalId    String?  // ID da transação no gateway
+  metadataJson  String?  // Dados adicionais em formato JSON string
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relacionamentos
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+
+  @@map("transactions")
+}
+
+// Modelo de Torneio
+model Tournament {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  type          String   // regular, premium, championship
+  entryFee      Float    @default(0)
+  prizePool     Float    @default(0)
+  maxParticipants Int    @default(100)
+  status        String   @default("scheduled") // scheduled, active, completed, cancelled
+  startTime     DateTime
+  endTime       DateTime?
+  isRecurring   Boolean  @default(false)
+  recurringPattern String? // cron pattern
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relacionamentos
+  gameRooms     GameRoom[]
+
+  @@map("tournaments")
+}
+
+// Modelo de Conquista
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  icon        String?
+  category    String   // gameplay, social, progression
+  points      Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  // Relacionamentos
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+// Modelo de Conquista do Usuário
+model UserAchievement {
+  id          String   @id @default(cuid())
+  unlockedAt  DateTime @default(now())
+
+  // Relacionamentos
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+  achievementId String
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+// Modelo de Relatório/Denúncia
+model Report {
+  id          String   @id @default(cuid())
+  reason      String   // cheating, inappropriate_behavior, spam
+  description String?
+  status      String   @default("pending") // pending, reviewed, resolved, dismissed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relacionamentos
+  reportedBy  User     @relation("ReportedBy", fields: [reportedById], references: [id])
+  reportedById String
+  reportedUser User    @relation("ReportedUser", fields: [reportedUserId], references: [id])
+  reportedUserId String
+
+  @@map("reports")
+}
+
+// Modelo de Mensagem de Chat
+model ChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  type      String   @default("text") // text, system, emoji
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relacionamentos
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@map("chat_messages")
+}
+
+// Modelo de Amizade
+model Friendship {
+  id        String   @id @default(cuid())
+  status    String   @default("pending") // pending, accepted, blocked
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  user      User     @relation("User", fields: [userId], references: [id])
+  userId    String
+  friend    User     @relation("Friend", fields: [friendId], references: [id])
+  friendId  String
+
+  @@unique([userId, friendId])
+  @@map("friendships")
+}
+
+// Modelo de Banco de Perguntas
+model Question {
+  id            String   @id @default(cuid())
+  text          String
+  option1       String   // Primeira opção
+  option2       String   // Segunda opção
+  option3       String   // Terceira opção
+  option4       String   // Quarta opção
+  correctAnswer Int      // Índice da resposta correta (1-4)
+  image         String?
+  category      String   // maps, weapons, general, etc.
+  difficulty    String   // easy, medium, hard
+  tagsJson      String?  // Tags em formato JSON string
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("questions")
+}

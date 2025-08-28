@@ -7,11 +7,13 @@ import NotFound from "pages/NotFound";
 import QuizLobby from './pages/quiz-lobby';
 import LiveQuiz from './pages/live-quiz';
 import SteamLoginPage from './pages/steam-login';
+import EmailLoginPage from './pages/email-login';
+import RegisterPage from './pages/register';
+import EmailConfirmationPage from './pages/email-confirmation';
 import Dashboard from './pages/dashboard';
 import LeaderboardsPage from './pages/leaderboards';
 import ProfileSettings from './pages/profile-settings';
 import GameRoomsPage from './pages/game-rooms';
-import TournamentRoom from './pages/tournament-room';
 import { getCurrentUser } from './utils/authService';
 
 // Componente para proteger rotas que requerem autenticação
@@ -20,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
   
   if (!currentUser) {
     // Redirecionar para a página de login se não estiver autenticado
-    return <Navigate to="/steam-login" replace />;
+    return <Navigate to="/email-login" replace />;
   }
   
   return children;
@@ -38,6 +40,9 @@ const Routes = () => {
         <RouterRoutes>
           {/* Rotas públicas */}
           <Route path="/steam-login" element={<SteamLoginPage />} />
+          <Route path="/email-login" element={<EmailLoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/email-confirmation" element={<EmailConfirmationPage />} />
           
           {/* Rotas protegidas (requerem autenticação) */}
           <Route path="/" element={
@@ -73,11 +78,6 @@ const Routes = () => {
           <Route path="/game-rooms" element={
             <ProtectedRoute>
               <GameRoomsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/tournament-room/:roomId" element={
-            <ProtectedRoute>
-              <TournamentRoom />
             </ProtectedRoute>
           } />
           <Route path="/leaderboards" element={

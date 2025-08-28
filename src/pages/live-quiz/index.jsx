@@ -383,13 +383,6 @@ const LiveQuiz = () => {
 
   // Voltar para a sala de torneio
   const handleBackToRoom = () => {
-    // Enviar evento para o servidor via WebSocket para notificar que o jogador voltou para a sala
-    websocketService.send('player_returned', {
-      roomId,
-      userId: currentUser.id
-    });
-    
-    // Navegar de volta para a sala de torneio
     navigate(`/tournament-room/${roomId}`);
   };
 

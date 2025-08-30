@@ -48,6 +48,138 @@ cs_quiz_arena/
 │   ├── App.jsx         # Componente principal da aplicação
 │   ├── Routes.jsx      # Rotas da aplicação
 │   └── index.jsx       # Ponto de entrada da aplicação
+├── backend/            # Backend Node.js
+│   ├── src/            # Código fonte do backend
+│   ├── prisma/         # Schema e migrações do banco
+│   └── data/           # Banco de dados SQLite
+├── .env                # Variáveis de ambiente
+├── index.html          # Template HTML
+├── package.json        # Dependências e scripts do projeto
+├── tailwind.config.js  # Configuração do Tailwind CSS
+└── vite.config.mjs     # Configuração do Vite
+```
+
+## 🚧 Status de Desenvolvimento
+
+### ✅ **Funcionalidades Implementadas**
+
+#### Autenticação e Usuários
+- ✅ Sistema de login (Steam e Email)
+- ✅ Registro de usuários
+- ✅ Confirmação de email
+- ✅ Painel administrativo
+- ✅ Configurações de perfil
+- ✅ Usuários de teste para desenvolvimento
+
+#### Interface Principal
+- ✅ Dashboard com lobbies disponíveis
+- ✅ Sistema de salas de jogo (GameRooms)
+- ✅ Lobby de quiz com chat
+- ✅ Quiz ao vivo (LiveQuiz)
+- ✅ Leaderboards/Rankings
+- ✅ Sistema de notificações
+- ✅ Interface responsiva com Tailwind CSS
+
+### 🚧 **Funcionalidades Pendentes**
+
+#### 1. **Sistema de Torneios** (Alta Prioridade)
+- ❌ Página de torneios (`tournament-room` existe mas vazia)
+- ❌ Rota `/tournament-room` não implementada
+- ❌ Criação e gerenciamento de torneios
+- ❌ Brackets de eliminação
+- ❌ Sistema de inscrições
+- ❌ Premiações de torneios
+
+#### 2. **Backend Completo** (Alta Prioridade)
+- ❌ API REST para todas as funcionalidades
+- ❌ Banco de dados real (atualmente usando mocks)
+- ❌ Sistema de WebSocket para tempo real
+- ❌ Autenticação JWT
+- ❌ Middleware de segurança
+- ❌ Validação de dados
+
+#### 3. **Sistema de Perguntas** (Alta Prioridade)
+- ❌ CRUD de perguntas no painel admin
+- ❌ Categorização por dificuldade
+- ❌ Upload de imagens para perguntas
+- ❌ Sistema de tags
+- ❌ Importação/exportação de perguntas
+- ❌ Banco de perguntas sobre Counter-Strike
+
+#### 4. **Funcionalidades de Jogo** (Média Prioridade)
+- ❌ Sistema de pontuação em tempo real
+- ❌ Power-ups e bônus
+- ❌ Sistema de conquistas
+- ❌ Histórico de partidas
+- ❌ Estatísticas detalhadas
+- ❌ Sistema de ranking ELO
+
+#### 5. **Sistema Financeiro** (Média Prioridade)
+- ❌ Carteira virtual funcional
+- ❌ Transações de entrada/prêmios
+- ❌ Histórico financeiro
+- ❌ Sistema de recompensas
+- ❌ Integração com pagamentos
+- ❌ Sistema de cashout
+
+#### 6. **Funcionalidades Sociais** (Baixa Prioridade)
+- ❌ Sistema de amigos
+- ❌ Chat global
+- ❌ Perfis públicos
+- ❌ Compartilhamento de resultados
+- ❌ Sistema de clãs/equipes
+- ❌ Feed de atividades
+
+#### 7. **Administração Avançada** (Média Prioridade)
+- ❌ Relatórios detalhados
+- ❌ Moderação de conteúdo
+- ❌ Logs do sistema
+- ❌ Configurações globais
+- ❌ Gestão de usuários
+- ❌ Analytics e métricas
+
+#### 8. **Mobile e PWA** (Baixa Prioridade)
+- ❌ Responsividade completa
+- ❌ App mobile nativo
+- ❌ Notificações push
+- ❌ Modo offline
+
+### 🎯 **Roadmap de Desenvolvimento**
+
+#### Fase 1 - Backend e Core (Prioridade Alta)
+1. Implementar API REST completa
+2. Configurar banco de dados real
+3. Sistema de autenticação JWT
+4. CRUD de perguntas
+5. Sistema de WebSocket
+
+#### Fase 2 - Gameplay (Prioridade Alta)
+1. Sistema de torneios
+2. Pontuação em tempo real
+3. Sistema financeiro básico
+4. Histórico de partidas
+
+#### Fase 3 - Funcionalidades Avançadas (Prioridade Média)
+1. Sistema de conquistas
+2. Funcionalidades sociais
+3. Administração avançada
+4. Analytics
+
+#### Fase 4 - Mobile e Otimizações (Prioridade Baixa)
+1. PWA completo
+2. App mobile
+3. Otimizações de performance
+4. Testes automatizados
+
+### 👥 **Credenciais de Teste**
+
+#### Administrador
+- **Email**: admin@csquiz.com
+- **Senha**: admin123
+
+#### Usuários de Teste
+- **Email**: usuario@teste.com | **Senha**: teste123
+- **Email**: jogador1@csquiz.com | **Senha**: jogador123
 ├── .env                # Variáveis de ambiente
 ├── index.html          # Template HTML
 ├── package.json        # Dependências e scripts do projeto

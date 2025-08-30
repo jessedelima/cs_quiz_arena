@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -37,6 +38,7 @@ model User {
   hostedRooms       GameRoom[]        @relation("HostedRooms")
   roomParticipations RoomParticipant[] @relation("UserParticipations")
   quizResults       QuizResult[]      @relation("UserResults")
+  quizAnswers       QuizAnswer[]      @relation("UserParticipations")
   transactions      Transaction[]     @relation("UserTransactions")
   achievements      UserAchievement[] @relation("UserAchievements")
   reportsMade       Report[]          @relation("ReportsMade")

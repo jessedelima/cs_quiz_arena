@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Icon from '../../components/AppIcon';
-import { authApi } from '../../api/apiService';
+import { loginWithEmail } from '../../utils/authService';
 import GoogleLoginButton from '../../components/auth/GoogleLoginButton';
 
 const EmailLoginPage = () => {
@@ -46,14 +46,22 @@ const EmailLoginPage = () => {
     setIsLoading(true);
 
     try {
-      const result = await authApi.login(formData.email, formData.password);
+      const result = loginWithEmail(formData.email, formData.password);
       
-      setSuccess('Login realizado com sucesso!');
-      
-      // Redirecionar para o dashboard após login bem-sucedido
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
+      if (result.success) {
+        setSuccess(result.message || 'Login realizado com sucesso!');
+        
+        // Redirecionar para o dashboard após login bem-sucedido
+        setTimeout(() => {
+          if (result.isAdmin) {
+            navigate('/admin');
+          } else {
+            navigate('/dashboard');
+          }
+        }, 1500);
+      } else {
+        setError(result.error || 'Falha no login. Verifique suas credenciais.');
+      }
     } catch (error) {
       setError(error.message || 'Falha no login. Verifique suas credenciais.');
     } finally {

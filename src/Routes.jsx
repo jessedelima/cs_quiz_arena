@@ -14,6 +14,7 @@ import Dashboard from './pages/dashboard';
 import LeaderboardsPage from './pages/leaderboards';
 import ProfileSettings from './pages/profile-settings';
 import GameRoomsPage from './pages/game-rooms';
+import AdminPage from './pages/admin';
 import { getCurrentUser } from './utils/authService';
 
 // Componente para proteger rotas que requerem autenticação
@@ -88,6 +89,11 @@ const Routes = () => {
           <Route path="/profile-settings" element={
             <ProtectedRoute>
               <ProfileSettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminPage />
             </ProtectedRoute>
           } />
           

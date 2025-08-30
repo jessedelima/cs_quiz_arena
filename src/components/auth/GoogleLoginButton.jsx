@@ -1,6 +1,6 @@
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import Button from './ui/Button';
+import Button from '../ui/Button';
 
 const GoogleLoginButton = ({ onSuccess, onError, text = 'Entrar com Google', className = '' }) => {
   return (

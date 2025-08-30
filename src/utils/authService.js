@@ -20,11 +20,50 @@ const ADMIN_CREDENTIALS = {
   isAdmin: true
 };
 
+// Usuários de teste
+const TEST_USERS = [
+  {
+    id: 'user_001',
+    username: 'usuario_teste',
+    email: 'usuario@teste.com',
+    password: 'teste123',
+    isConfirmed: true,
+    isAdmin: false,
+    createdAt: new Date().toISOString(),
+    profile: {
+      avatar: null,
+      bio: 'Usuário de teste para demonstração'
+    }
+  },
+  {
+    id: 'user_002',
+    username: 'jogador1',
+    email: 'jogador1@csquiz.com',
+    password: 'jogador123',
+    isConfirmed: true,
+    isAdmin: false,
+    createdAt: new Date().toISOString(),
+    profile: {
+      avatar: null,
+      bio: 'Jogador experiente em CS'
+    }
+  }
+];
+
 // Inicializar o administrador se não existir
 const initializeAdmin = () => {
   const adminJson = localStorage.getItem(STORAGE_KEYS.ADMIN_USER);
   if (!adminJson) {
     localStorage.setItem(STORAGE_KEYS.ADMIN_USER, JSON.stringify(ADMIN_CREDENTIALS));
+  }
+};
+
+// Inicializar usuários de teste se não existirem
+const initializeTestUsers = () => {
+  const users = getUsers();
+  if (users.length === 0) {
+    saveUsers(TEST_USERS);
+    console.log('Usuários de teste inicializados:', TEST_USERS.map(u => ({ email: u.email, password: u.password })));
   }
 };
 
@@ -212,7 +251,7 @@ export const loginWithEmail = (email, password) => {
     return { success: false, error: 'Email ou senha incorretos.' };
   }
   
-  if (!user.emailConfirmed) {
+  if (!user.emailConfirmed && !user.isConfirmed) {
     return { success: false, error: 'Por favor, confirme seu email antes de fazer login.' };
   }
   
@@ -397,3 +436,6 @@ export const resetPassword = (token, email, newPassword) => {
     message: 'Senha redefinida com sucesso. Você já pode fazer login com sua nova senha.'
   };
 };
+
+// Inicializar usuários de teste após todas as funções estarem definidas
+initializeTestUsers();
